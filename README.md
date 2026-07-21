@@ -66,13 +66,6 @@ source .venv/bin/activate
 pip install -r app/requirements.txt
 ```
 
-### 4. Configure environment variables
-
-Copy the sample environment file and update it with your own values:
-
-```bash
-cp .env.example .env
-```
 
 Example values:
 
@@ -100,20 +93,5 @@ The API will be available at:
 - POST /auth/login
 - GET /health
 
-## Security Notes
 
-- Never commit secrets or local environment files.
-- Keep your JWT secret strong and private.
-- Use environment variables for production credentials.
-
-## GitHub Push Workflow
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-git push -u origin main
-```
 
