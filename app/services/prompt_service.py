@@ -19,6 +19,7 @@ def _tags_from_string(raw: str | None) -> list[str]:
 def serialize_prompt(prompt: Prompt) -> dict:
     return {
         "id": prompt.id,
+        "collection_id": prompt.collection_id,
         "title": prompt.title,
         "content": prompt.content,
         "tags": _tags_from_string(prompt.tags),
@@ -28,6 +29,7 @@ def serialize_prompt(prompt: Prompt) -> dict:
 def create_prompt(db: Session, prompt_data: PromptCreate) -> Prompt:
     prompt = Prompt(
         title=prompt_data.title,
+        collection_id = prompt_data.collection_id,  
         content=prompt_data.content,
         tags=_tags_to_string(prompt_data.tags),
     )

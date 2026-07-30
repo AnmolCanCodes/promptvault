@@ -12,11 +12,11 @@ def serialize_collection(collection: Collection) -> dict:
         "created_at": collection.created_at.isoformat() if collection.created_at else None,
     }
 
-def create_collection(db: Session, collection_data: CollectionCreate) -> Collection:
+def create_collection(db: Session, collection_data: CollectionCreate , user_id: int) -> Collection:
     collection = Collection(
         name=collection_data.name,
         description=collection_data.description,
-        user_id=collection_data.user_id,
+        user_id=user_id,
     )
     db.add(collection)
     db.commit()

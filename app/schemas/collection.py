@@ -4,7 +4,7 @@ from typing import Optional
 class CollectionBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = Field(default="", max_length=1000)
-    user_id: int
+    
 
 class CollectionCreate(CollectionBase):
     pass
@@ -16,6 +16,7 @@ class CollectionUpdate(BaseModel):
 
 class CollectionRead(CollectionBase):
     id: int
+    user_id: int
 
     class Config:
         from_attributes = True

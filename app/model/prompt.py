@@ -7,6 +7,7 @@ class Prompt(Base):
     __tablename__ = "prompts"
 
     id = Column(Integer, primary_key=True, index=True)
+    collection_id = Column(Integer, nullable=False, index=True)
     title = Column(String(255), nullable=False, index=True)
     content = Column(Text, nullable=False)
     tags = Column(String(500), default="")

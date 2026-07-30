@@ -10,7 +10,7 @@ class PromptBase(BaseModel):
 
 
 class PromptCreate(PromptBase):
-    pass
+    collection_id: int
 
 
 class PromptUpdate(BaseModel):
@@ -21,6 +21,7 @@ class PromptUpdate(BaseModel):
 
 class PromptRead(PromptBase):
     id: int
+    collection_id: int
 
     class Config:
         from_attributes = True
