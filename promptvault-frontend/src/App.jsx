@@ -8,17 +8,19 @@ function App() {
   const incrementScore = () => {
     setCount(count + 1);
   };
-
+ 
   // 3. Return the JSX (the visual layout)
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>My First React App</h1>
+      <h1>PromptVault</h1>
       
       {/* Displaying our state variable using curly braces */}
       <p>The button has been clicked {count} times.</p>
       
       {/* Triggering our function on click */}
-      <button onClick={incrementScore}>Click Me!</button>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={incrementScore}>
+        Click Me!
+      </button>
     </div>
   );
 }
