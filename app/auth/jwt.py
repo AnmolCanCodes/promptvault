@@ -1,14 +1,14 @@
 from jose import jwt , JWTError
 from app.config import settings
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,timezone
 
 
 def create_access_token(dara: dict, expires_delta: timedelta | None = None):
     to_encode = dara.copy()
     if expires_delta:
-        expire = datetime.now(timedelta.utc)+expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timedelta.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
     return encoded_jwt
