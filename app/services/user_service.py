@@ -19,10 +19,12 @@ def get_next_available_user_id(db: Session) -> int:
 
 def create_user(db: Session, user: UserRegistration) -> User:
     hashed_password = hash_password(user.password)
+    # Generate username from email if not provided
+    username = user.username if user.username else user.email.split('@')[0]
     db_user = User(
         id=get_next_available_user_id(db),
         email=user.email,
-        username=user.username,
+        username=username,
         hashed_password=hashed_password,
     )
     db.add(db_user)
