@@ -6,6 +6,7 @@ import Button from '../components/Button';
 
 const Register = () => {
   const [formData, setFormData] = useState({
+    username: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -15,6 +16,20 @@ const Register = () => {
   
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  const getErrorMessage = (err) => {
+    const detail = err.response?.data?.detail;
+
+    if (typeof detail === 'string') {
+      return detail;
+    }
+
+    if (Array.isArray(detail)) {
+      return detail.map((item) => item.msg).filter(Boolean).join(', ');
+    }
+
+    return 'Registration failed. Please try again.';
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -38,13 +53,18 @@ const Register = () => {
       return;
     }
 
+    if (formData.username.trim().length < 3) {
+      setError('Username must be at least 3 characters');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await register(formData.email, formData.password);
+      await register(formData.email.trim(), formData.password, formData.username.trim());
       navigate('/login');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Registration failed. Please try again.');
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -66,12 +86,24 @@ const Register = () => {
         )}
 
         <Input
+          label="Username"
+          type="text"
+          name="username"
+          placeholder="Choose a username"
+          value={formData.username}
+          onChange={handleChange}
+          autoComplete="username"
+          required
+        />
+
+        <Input
           label="Email"
           type="email"
           name="email"
           placeholder="you@example.com"
           value={formData.email}
           onChange={handleChange}
+          autoComplete="email"
           required
         />
         
@@ -82,6 +114,7 @@ const Register = () => {
           placeholder="Create a password"
           value={formData.password}
           onChange={handleChange}
+          autoComplete="new-password"
           required
         />
         
@@ -92,6 +125,7 @@ const Register = () => {
           placeholder="Confirm your password"
           value={formData.confirmPassword}
           onChange={handleChange}
+          autoComplete="new-password"
           required
         />
         
@@ -102,7 +136,7 @@ const Register = () => {
           disabled={loading}
           className="w-full"
         >
-          {loading ? 'Creating account...' : 'Sign Up'}
+          {loading ? 'Creating account...' : 'Create Account'}
         </Button>
       
         <p className="text-center text-sm text-slate-600">

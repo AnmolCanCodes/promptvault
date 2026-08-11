@@ -169,7 +169,7 @@ const CollectionDetail = () => {
                 </div>
               </div>
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-6 text-slate-700">
+                <pre className="whitespace-pre-wrap wrap-break font-mono text-sm leading-6 text-slate-700">
                   {prompt.content}
                 </pre>
               </div>

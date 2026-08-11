@@ -7,14 +7,24 @@ from app.db import get_db
 from app.dependencies.auth import get_current_user
 from app.model.user import User
 from app.schemas.user import UserRegistration, UserResponse
-from app.services.user_service import create_user
+from app.services.user_service import create_user, get_user_by_email, get_user_by_username
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/register", response_model=UserResponse)
 async def register_user(user: UserRegistration, db: Session = Depends(get_db)):
+    username = (user.username or user.email.split("@")[0]).strip()
+
+    if get_user_by_email(db, user.email):
+        raise HTTPException(status_code=400, detail="Email is already registered")
+
+    if get_user_by_username(db, username):
+        raise HTTPException(status_code=400, detail="Username is already taken")
+
+    user.username = username
     created_user = create_user(db, user)
     return {
+        "id": created_user.id,
         "email": created_user.email,
         "username": created_user.username,
         "message": "User registered successfully"
