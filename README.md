@@ -74,6 +74,14 @@ DATABASE_URL=sqlite:///./promptvault.db
 JWT_SECRET_KEY=replace-with-a-secure-random-secret
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+IMPORTANT: The application will refuse to start if `JWT_SECRET_KEY` is left as the insecure
+default value. Make sure to set `JWT_SECRET_KEY` to a strong, random string before running the
+app in any networked or production environment. Example:
+
+```bash
+export JWT_SECRET_KEY="$(openssl rand -hex 32)"
+```
 ```
 
 ### 5. Run the application

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 const Modal = ({ 
   isOpen, 
@@ -35,15 +35,16 @@ const Modal = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm"
       onClick={handleBackdropClick}
     >
-      <div className={`relative w-full ${sizes[size]} bg-white rounded-lg shadow-xl`}>
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+      <div className={`relative w-full ${sizes[size]} overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl`}>
+        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-5">
+          <h2 className="text-lg font-semibold text-slate-950">{title}</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-white hover:text-slate-900"
+            aria-label="Close modal"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

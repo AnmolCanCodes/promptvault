@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Button = ({ 
   children, 
   variant = 'primary', 
@@ -9,19 +7,19 @@ const Button = ({
   className = '', 
   ...props 
 }) => {
-  const baseStyles = 'font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
+  const baseStyles = 'inline-flex items-center justify-center gap-2 rounded-md font-semibold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none';
   
   const variants = {
-    primary: 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500',
-    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-    ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500'
+    primary: 'bg-teal-700 text-white hover:bg-teal-800 focus:ring-teal-600',
+    secondary: 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 focus:ring-slate-400',
+    danger: 'bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-500',
+    ghost: 'bg-transparent text-slate-700 shadow-none hover:bg-slate-100 focus:ring-slate-400'
   };
   
   const sizes = {
-    small: 'px-3 py-1.5 text-sm',
-    medium: 'px-4 py-2 text-base',
-    large: 'px-6 py-3 text-lg'
+    small: 'min-h-9 px-3 text-sm',
+    medium: 'min-h-10 px-4 text-sm',
+    large: 'min-h-12 px-5 text-base'
   };
   
   const classes = `${baseStyles} ${variants[variant]} ${sizes[size]} ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`;

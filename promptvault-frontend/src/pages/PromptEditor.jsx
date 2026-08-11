@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { promptService } from '../services/promptService';
 import Button from '../components/Button';
@@ -10,7 +10,7 @@ const PromptEditor = () => {
   const location = useLocation();
   const collectionId = urlCollectionId || location.state?.collectionId;
   
-  const [isEditing, setIsEditing] = useState(!!id);
+  const isEditing = !!id;
   const [formData, setFormData] = useState({
     title: '',
     content: ''
@@ -19,13 +19,7 @@ const PromptEditor = () => {
   const [fetchLoading, setFetchLoading] = useState(isEditing);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (isEditing && id) {
-      fetchPrompt();
-    }
-  }, [id, isEditing]);
-
-  const fetchPrompt = async () => {
+  const fetchPrompt = useCallback(async () => {
     try {
       setFetchLoading(true);
       const prompt = await promptService.getPrompt(id);
@@ -33,12 +27,18 @@ const PromptEditor = () => {
         title: prompt.title || '',
         content: prompt.content || ''
       });
-    } catch (err) {
+    } catch {
       setError('Failed to load prompt');
     } finally {
       setFetchLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (isEditing && id) {
+      queueMicrotask(fetchPrompt);
+    }
+  }, [fetchPrompt, id, isEditing]);
 
   const handleChange = (e) => {
     setFormData({
@@ -80,34 +80,44 @@ const PromptEditor = () => {
 
   if (fetchLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading prompt...</div>
+      <div className="flex h-80 items-center justify-center rounded-lg border border-slate-200 bg-white">
+        <div className="flex items-center gap-3 text-sm font-medium text-slate-500">
+          <span className="spinner" />
+          Loading prompt...
+        </div>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="mb-8">
+    <div className="space-y-6">
+      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
         <Button
           variant="ghost"
           onClick={() => navigate(`/collections/${collectionId}`)}
-          className="mb-4"
+          className="mb-5"
         >
-          ← Back to Collection
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          Back to Collection
         </Button>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">Prompt</p>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950">
           {isEditing ? 'Edit Prompt' : 'Create New Prompt'}
         </h1>
+        <p className="mt-2 max-w-2xl text-sm text-slate-500">
+          Write a clean, reusable prompt with a title your future self can find quickly.
+        </p>
       </div>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+        <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm font-medium text-rose-700">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
         <Input
           label="Prompt Title"
           placeholder="My Awesome Prompt"
@@ -118,7 +128,7 @@ const PromptEditor = () => {
         />
 
         <div className="flex flex-col">
-          <label className="mb-2 text-sm font-medium text-gray-700">
+          <label className="mb-1.5 text-sm font-semibold text-slate-700">
             Prompt Content
           </label>
           <textarea
@@ -126,7 +136,7 @@ const PromptEditor = () => {
             placeholder="Enter your prompt content here..."
             value={formData.content}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors resize-none font-mono text-sm"
+            className="min-h-80 w-full resize-y rounded-md border border-slate-200 bg-slate-50 px-4 py-3 font-mono text-sm leading-6 text-slate-900 shadow-sm transition-colors placeholder:text-slate-400 focus:border-teal-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-100"
             rows="12"
             required
           />

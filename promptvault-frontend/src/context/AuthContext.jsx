@@ -1,25 +1,43 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { authService } from '../services/authService';
 import { storage } from '../utils/storage';
+import { AuthContext } from './authContextCore';
 
-const AuthContext = createContext(null);
+const getInitialAuthState = () => {
+  const token = storage.getToken();
+  const savedUser = storage.getUser();
+
+  return {
+    token,
+    user: savedUser || null,
+    isAuthenticated: Boolean(token),
+    loading: Boolean(token && !savedUser)
+  };
+};
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [initialAuthState] = useState(getInitialAuthState);
+  const [user, setUser] = useState(initialAuthState.user);
+  const [loading, setLoading] = useState(initialAuthState.loading);
+  const [isAuthenticated, setIsAuthenticated] = useState(initialAuthState.isAuthenticated);
 
   useEffect(() => {
-    const token = storage.getToken();
-    if (token) {
-      setIsAuthenticated(true);
-      const savedUser = storage.getUser();
-      if (savedUser) {
-        setUser(savedUser);
-      }
+    if (!initialAuthState.token || initialAuthState.user) {
+      return;
     }
-    setLoading(false);
-  }, []);
+
+    authService.me()
+      .then((data) => {
+        if (data) {
+          setUser(data);
+        }
+      })
+      .catch(() => {
+        setIsAuthenticated(false);
+        storage.clear();
+      })
+      .finally(() => setLoading(false));
+  }, [initialAuthState]);
 
   const login = async (email, password) => {
     const data = await authService.login(email, password);
@@ -43,24 +61,14 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     isAuthenticated,
     loading,
     login,
     register,
     logout
-  };
+  }), [user, isAuthenticated, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export default AuthContext;

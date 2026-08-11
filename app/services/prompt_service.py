@@ -23,7 +23,12 @@ def serialize_prompt(prompt: Prompt) -> dict:
         "title": prompt.title,
         "content": prompt.content,
         "tags": _tags_from_string(prompt.tags),
+        "created_at": prompt.created_at.isoformat() if prompt.created_at else None,
     }
+
+
+def list_prompts_by_collection(db: Session, collection_id: int) -> list[Prompt]:
+    return db.query(Prompt).filter(Prompt.collection_id == collection_id).order_by(Prompt.created_at.desc()).all()
 
 
 def create_prompt(db: Session, prompt_data: PromptCreate) -> Prompt:

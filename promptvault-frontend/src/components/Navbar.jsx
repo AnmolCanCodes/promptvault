@@ -1,29 +1,31 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
 
   return (
-    <nav className="bg-white border-b border-gray-200">
+    <nav className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link to={isAuthenticated ? "/dashboard" : "/"} className="flex items-center">
-              <span className="text-2xl font-bold text-indigo-600">PromptVault</span>
+            <Link to={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-3">
+              <span className="grid h-9 w-9 place-items-center rounded-md bg-teal-700 text-sm font-black text-white">
+                PV
+              </span>
+              <span className="text-xl font-bold tracking-tight text-slate-950">PromptVault</span>
             </Link>
           </div>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
-                <span className="text-sm text-gray-700">
+                <span className="hidden max-w-[220px] truncate rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700 sm:block">
                   {user?.email || 'User'}
                 </span>
                 <button
                   onClick={logout}
-                  className="text-sm text-gray-700 hover:text-gray-900"
+                  className="rounded-md px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-950"
                 >
                   Logout
                 </button>
@@ -32,13 +34,13 @@ const Navbar = () => {
               <>
                 <Link
                   to="/login"
-                  className="text-sm text-gray-700 hover:text-gray-900"
+                  className="rounded-md px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-950"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+                  className="rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-800"
                 >
                   Register
                 </Link>

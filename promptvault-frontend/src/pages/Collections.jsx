@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { collectionService } from '../services/collectionService';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Modal from '../components/Modal';
 
 const Collections = () => {
+  const { user } = useAuth();
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -15,21 +17,21 @@ const Collections = () => {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchCollections();
-  }, []);
-
-  const fetchCollections = async () => {
+  const fetchCollections = useCallback(async () => {
     try {
       setLoading(true);
       const data = await collectionService.getCollections();
       setCollections(data);
-    } catch (err) {
+    } catch {
       setError('Failed to load collections');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    queueMicrotask(fetchCollections);
+  }, [fetchCollections]);
 
   const handleCreateCollection = async (e) => {
     e.preventDefault();
@@ -62,7 +64,7 @@ const Collections = () => {
     try {
       await collectionService.deleteCollection(id);
       fetchCollections();
-    } catch (err) {
+    } catch {
       setError('Failed to delete collection');
     }
   };
@@ -72,62 +74,100 @@ const Collections = () => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Collections</h1>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">Library</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950">Collections</h1>
+          <p className="mt-2 text-sm text-slate-500">
+            Manage reusable prompt groups, review ownership, and open shared libraries.
+          </p>
+        </div>
         <Button onClick={() => setIsModalOpen(true)}>
-          + New Collection
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          New Collection
         </Button>
       </div>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+        <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm font-medium text-rose-700">
           {error}
         </div>
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-500">Loading collections...</div>
+        <div className="flex h-80 items-center justify-center rounded-lg border border-slate-200 bg-white">
+          <div className="flex items-center gap-3 text-sm font-medium text-slate-500">
+            <span className="spinner" />
+            Loading collections...
+          </div>
         </div>
       ) : collections.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">📁</div>
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">No collections yet</h2>
-          <p className="text-gray-500 mb-6">Create your first collection to get started</p>
-          <Button onClick={() => setIsModalOpen(true)}>
-            Create Collection
-          </Button>
+        <div className="rounded-lg border border-dashed border-slate-300 bg-white px-6 py-14 text-center shadow-sm">
+          <div className="mx-auto mb-5 grid h-14 w-14 place-items-center rounded-md bg-teal-50 text-teal-700">
+            <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H10l2 2h5.5A2.5 2.5 0 0 1 20 9.5v7A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-semibold text-slate-900">No collections yet</h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">Create a collection to keep related prompts organized and easy to reuse.</p>
+          <div className="mt-6">
+            <Button onClick={() => setIsModalOpen(true)}>
+              Create Collection
+            </Button>
+          </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {collections.map((collection) => (
             <div
               key={collection.id}
-              className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+              className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-teal-200 hover:shadow-md"
             >
-              <div className="flex justify-between items-start mb-4">
-                <h3
-                  className="text-xl font-semibold text-gray-900 cursor-pointer hover:text-indigo-600"
+              <div className="mb-5 flex items-start justify-between gap-4">
+                <button
+                  type="button"
+                  className="group flex min-w-0 flex-1 items-start gap-4 text-left"
                   onClick={() => handleCollectionClick(collection.id)}
                 >
-                  {collection.name}
-                </h3>
-                <button
-                  onClick={() => handleDeleteCollection(collection.id)}
-                  className="text-red-500 hover:text-red-700 text-sm"
-                >
-                  Delete
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-md bg-slate-100 text-slate-700 group-hover:bg-teal-50 group-hover:text-teal-700">
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H10l2 2h5.5A2.5 2.5 0 0 1 20 9.5v7A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" />
+                    </svg>
+                  </span>
+                  <span className="min-w-0">
+                  <h3
+                    className="line-clamp-2 text-lg font-bold text-slate-950 group-hover:text-teal-800"
+                  >
+                    {collection.name}
+                  </h3>
+                  <span className="mt-1 block text-sm text-slate-500">
+                    {collection.user_id === user?.id ? (
+                      <span className="font-semibold text-teal-700">Owned by you</span>
+                    ) : (
+                      <span>Read-only collection</span>
+                    )}
+                  </span>
+                  </span>
                 </button>
+                {collection.user_id === user?.id && (
+                  <button
+                    onClick={() => handleDeleteCollection(collection.id)}
+                    className="rounded-md px-3 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
-              <p className="text-gray-600 text-sm mb-4">
-                {collection.description || 'No description'}
+              <p className="mb-5 line-clamp-3 min-h-[3.75rem] text-sm text-slate-500">
+                {collection.description || 'No description added yet.'}
               </p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center text-sm text-gray-500">
-                  <span className="mr-2">📝</span>
-                  <span>{collection.prompts?.length || 0} prompts</span>
-                </div>
+              <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                  {collection.prompt_count ?? 0} prompts
+                </span>
                 <Button
                   variant="ghost"
                   size="small"
@@ -152,7 +192,7 @@ const Collections = () => {
       >
         <form onSubmit={handleCreateCollection} className="space-y-4">
           {formError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+            <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm font-medium text-rose-700">
               {formError}
             </div>
           )}
@@ -164,14 +204,14 @@ const Collections = () => {
             required
           />
           <div className="flex flex-col">
-            <label className="mb-1 text-sm font-medium text-gray-700">
+            <label className="mb-1.5 text-sm font-semibold text-slate-700">
               Description (optional)
             </label>
             <textarea
               placeholder="A brief description of your collection"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors resize-none"
+              className="w-full resize-none rounded-md border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm transition-colors placeholder:text-slate-400 focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100"
               rows="3"
             />
           </div>

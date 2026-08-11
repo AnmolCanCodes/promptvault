@@ -6,6 +6,7 @@ class UserRegistration(BaseModel):
     username: str | None = None
 
 class UserResponse(BaseModel):
+    id: int
     email: EmailStr
     username: str
     message: str

@@ -13,3 +13,9 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+if settings.JWT_SECRET_KEY == "change-me-in-production":
+    raise RuntimeError(
+        "Insecure default JWT_SECRET_KEY detected. Set the JWT_SECRET_KEY environment "
+        "variable to a strong, random value before running the application in any "
+        "networked or production environment. Example: export JWT_SECRET_KEY='your-strong-secret'"
+    )

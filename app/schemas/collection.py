@@ -17,6 +17,7 @@ class CollectionUpdate(BaseModel):
 class CollectionRead(CollectionBase):
     id: int
     user_id: int
+    prompt_count: int = 0
 
     class Config:
         from_attributes = True

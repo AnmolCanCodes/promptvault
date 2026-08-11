@@ -19,9 +19,12 @@ class PromptUpdate(BaseModel):
     tags: Optional[list[str]] = None
 
 
+from datetime import datetime
+
 class PromptRead(PromptBase):
     id: int
     collection_id: int
+    created_at: datetime
 
     class Config:
         from_attributes = True

@@ -24,7 +24,15 @@ def login_for_access_token(db: Session, email: str, password: str):
         )
 
     access_token = create_access_token(
-        {"sub": user.email},
+        {"sub": user.email, "user_id": user.id},
         expires_delta=timedelta(minutes=30),
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "username": user.username,
+        },
+    }
