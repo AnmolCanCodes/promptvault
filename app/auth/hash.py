@@ -6,19 +6,21 @@ pwd_context = CryptContext(
 )
 
 
-def hash_password(password: str) -> str:
+MAX_BCRYPT_PASSWORD_BYTES = 72
+
+
+def _truncate_password(password: str) -> str:
     password_bytes = password.encode("utf-8")
+    if len(password_bytes) <= MAX_BCRYPT_PASSWORD_BYTES:
+        return password
 
-    if len(password_bytes) > 72:
-        raise ValueError("Password cannot be longer than 72 bytes")
+    truncated_bytes = password_bytes[:MAX_BCRYPT_PASSWORD_BYTES]
+    return truncated_bytes.decode("utf-8", errors="ignore")
 
-    return pwd_context.hash(password)
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(_truncate_password(password))
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    password_bytes = plain_password.encode("utf-8")
-
-    if len(password_bytes) > 72:
-        return False
-
-    return pwd_context.verify(plain_password, hashed_password)
+    return pwd_context.verify(_truncate_password(plain_password), hashed_password)
