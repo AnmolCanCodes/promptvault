@@ -2,7 +2,8 @@
 
 PromptVault is a FastAPI-based backend application for managing AI prompts and prompt collections. It provides a secure and structured way to register users, authenticate sessions, and manage prompts for tools such as ChatGPT, Claude, and Gemini.
 
-#LiveDemo
+## LiveDemo
+
 https://promptvault-ten-rho.vercel.app/register
 
 ## Overview
