@@ -11,13 +11,17 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-md bg-teal-700 text-sm font-black text-white">
-                PV
+              <span className="grid h-9 w-9 place-items-center rounded-md bg-teal-33300 text-white">
+                <img
+                  src="/promptvault.png"
+                  alt="PromptVault"
+                  className="h-7 w-7 object-contain"
+                />
               </span>
               <span className="text-xl font-bold tracking-tight text-slate-950">PromptVault</span>
             </Link>
           </div>
-          
+
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
