@@ -4,7 +4,7 @@ PromptVault is a FastAPI-based backend application for managing AI prompts and p
 
 ## LiveDemo
 
-https://promptvault-ten-rho.vercel.app/register
+https://promptvault-ten-rho.vercel.app
 
 ## Overview
 
