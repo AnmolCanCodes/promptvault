@@ -1,59 +1,86 @@
+
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const displayName = user?.username || user?.email || 'User';
+  const initial = displayName.charAt(0).toUpperCase();
 
   return (
-    <nav className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link to={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-md bg-teal-33300 text-white">
-                <img
-                  src="/promptvault.png"
-                  alt="PromptVault"
-                  className="h-7 w-7 object-contain"
-                />
-              </span>
-              <span className="text-xl font-bold tracking-tight text-slate-950">PromptVault</span>
-            </Link>
-          </div>
+    <header className="sticky top-0 z-40 h-16 border-b border-(--color-border) bg-(--color-bg)/95 backdrop-blur-md">
+      <div className="mx-auto flex h-full w-full items-center justify-between px-5 sm:px-7">
 
-          <div className="flex items-center gap-3">
-            {isAuthenticated ? (
-              <>
-                <span className="hidden max-w truncate rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700 sm:block">
-                  {displayName}
-                </span>
-                <button
-                  onClick={logout}
-                  className="rounded-md border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950"
-                >
-                  Sign out
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="rounded-md px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="rounded-md border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950">
-                  Create Account
-                </Link>
-              </>
-            )}
-          </div>
+        {/* Brand */}
+        <Link
+          to={isAuthenticated ? '/dashboard' : '/'}
+          className="group flex items-center gap-3"
+        >
+          <span className="grid h-9 w-9 place-items-center rounded-md bg-(--color-bg-inverse) transition-transform duration-200 group-hover:scale-[1.04]">
+            <img
+              src="/promptvault.png"
+              alt=""
+              className="h-6 w-6 object-contain"
+            />
+          </span>
+
+          <span className="text-[19px] font-bold tracking-[-0.055em] text-(--color-text)">
+            PromptVault
+          </span>
+
+          <span className="ml-1 hidden border-l border-(--color-border-strong) pl-3 text-[11px] font-medium tracking-wide text-(--color-text-muted) sm:block">
+            PROMPT LIBRARY
+          </span>
+        </Link>
+
+        {/* Account actions */}
+        <div className="flex items-center gap-3">
+          {isAuthenticated ? (
+            <>
+              <div className="hidden items-center gap-2.5 sm:flex">
+                <div className="grid h-8 w-8 place-items-center rounded-full border border-(--color-border-strong) bg-(--color-bg-subtle) text-xs font-bold text-(--color-text)">
+                  {initial}
+                </div>
+
+                <div className="max-w-37.5">
+                  <p className="truncate text-xs font-semibold text-(--color-text)">
+                    {displayName}
+                  </p>
+                  <p className="text-[10px] text-(--color-text-muted)">
+                    Personal workspace
+                  </p>
+                </div>
+              </div>
+
+              <span className="hidden h-7 w-px bg-(--color-border) sm:block" />
+
+              <button
+                onClick={logout}
+                className="rounded-md border border-(--color-border) bg-(--color-bg-elevated) px-3.5 py-2 text-xs font-semibold text-(--color-text-secondary) transition-colors hover:border-(--color-border-strong) hover:bg-(--color-bg-hover) hover:text-(--color-text)"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="rounded-md px-3 py-2 text-sm font-medium text-(--color-text-secondary) transition-colors hover:text-(--color-text)"
+              >
+                Log in
+              </Link>
+
+              <Link
+                to="/register"
+                className="rounded-md bg-(--color-bg-inverse) px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-(--color-primary)"
+              >
+                Get started
+              </Link>
+            </>
+          )}
         </div>
       </div>
-    </nav>
+    </header>
   );
 };
 

@@ -1,38 +1,71 @@
-const Input = ({ 
-  label, 
-  type = 'text', 
-  placeholder = '', 
-  value = '', 
-  onChange, 
-  error = '', 
-  disabled = false, 
-  className = '', 
-  ...props 
+
+import { useId } from 'react';
+
+const Input = ({
+  label,
+  type = 'text',
+  placeholder = '',
+  value = '',
+  onChange,
+  error = '',
+  disabled = false,
+  className = '',
+  id,
+  ...props
 }) => {
-  const baseStyles = 'w-full rounded-md border px-4 py-2.5 text-sm text-slate-900 shadow-sm transition-colors placeholder:text-slate-400 focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100';
-  const errorStyles = error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-200';
-  const disabledStyles = disabled ? 'bg-slate-100 cursor-not-allowed' : 'bg-white';
-  
-  const classes = `${baseStyles} ${errorStyles} ${disabledStyles} ${className}`;
-  
+  const generatedId = useId();
+  const inputId = id || generatedId;
+  const errorId = `${inputId}-error`;
+
+  const inputStyles = `
+    w-full min-h-11 rounded-md border
+    bg-[var(--color-bg-elevated)]
+    px-3.5 py-2.5
+    text-sm text-[var(--color-text)]
+    placeholder:text-[var(--color-text-subtle)]
+    outline-none
+    transition-all duration-150
+    focus:border-[var(--color-primary)]
+    focus:ring-2 focus:ring-[var(--color-primary)]/10
+    disabled:cursor-not-allowed disabled:bg-[var(--color-bg-subtle)] disabled:opacity-70
+    ${error
+      ? 'border-[var(--color-error)] focus:border-[var(--color-error)] focus:ring-[var(--color-error)]/10'
+      : 'border-[var(--color-border-strong)]'
+    }
+  `;
+
   return (
-    <div className="flex flex-col">
+    <div className="flex w-full flex-col gap-1.5">
       {label && (
-        <label className="mb-1.5 text-sm font-semibold text-slate-700">
+        <label
+          htmlFor={inputId}
+          className="text-xs font-semibold text-(--color-text)"
+        >
           {label}
         </label>
       )}
+
       <input
+        id={inputId}
         type={type}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={classes}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? errorId : undefined}
+        className={`${inputStyles} ${className}`}
         {...props}
       />
+
       {error && (
-        <span className="mt-1 text-sm text-rose-600">{error}</span>
+        <span
+          id={errorId}
+          role="alert"
+          className="text-xs font-medium text-(--color-error)"
+        >
+          {error}
+        </span>
       )}
     </div>
   );
